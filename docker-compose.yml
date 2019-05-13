@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  database:
+    image: mysql:5.7
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      TZ: "America/Sao_Paulo"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "city_wheather"
+  cache:
+    image: redis:5.0.4-alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+  web:
+    container_name: web
+    restart: always
+    build: ./city-wheather
+    volumes:
+      - ./city-wheather:/var/www/html
+      - ./nginx/server.conf:/etc/nginx/sites-available/default
+    ports:
+      - "8000:80"
+    links:
+      - database
+      - cache
+      - api-available-cities
+    depends_on:
+      - database
+      - cache
+      - api-available-cities
+    command: bash -c "
+      chmod -R 777 /var/www/html/storage && 
+      cd /var/www/html/ &&
+      composer install &&
+      php artisan migrate &&
+      php artisan key:generate &&
+      cp -n .env.example .env && 
+      service nginx start && php-fpm --allow-to-run-as-root  --nodaemonize"
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - 28017
+  mongo_seed:
+    build: ./api-available-cities/mongo-seed
+    links:
+      - mongodb
+  api-available-cities:
+    build: ./api-available-cities
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    ports:
+      - 5000
+    environment:
+      - MONGO_URI=mongodb://mongodb/citiesDB
