@@ -6,7 +6,7 @@
 ## How to run this project
 
 1. Go to the root folder, example: ```cd ~/code/city-wheather```
-2. Execute the command docker-compose up -d
+2. Execute the command docker-compose up -d and wait for the download/configuration
 3. Put your Api key in `ROOT_FOLDER/city-wheather/.env` file on ``WHEATHER_API_KEY`` key
 4. Go to your browser and type: [http://localhost:8000](http://localhost:8000)
 ## Tests
