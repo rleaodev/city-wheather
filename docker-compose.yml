@@ -33,10 +33,10 @@ services:
     command: bash -c "
       chmod -R 777 /var/www/html/storage && 
       cd /var/www/html/ &&
+      cp -n .env.example .env && 
       composer install &&
       php artisan migrate &&
       php artisan key:generate &&
-      cp -n .env.example .env && 
       service nginx start && php-fpm --allow-to-run-as-root  --nodaemonize"
   mongodb:
     image: mongo
