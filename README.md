@@ -1,6 +1,6 @@
 # City Wheather App
 
-## Requiriments
+## Requirements
 - Docker and docker-compose installed
 
 ## How to run this project
